@@ -1,10 +1,24 @@
 import email
 import os
 import os.path
-
 from email.policy import default
+import re
 
-
+srcPat=re.compile(b"src=\"(.*?)\"")
+cssPat=re.compile(b"href=\"(.*\.css)")
+def srcRip(srcIn):
+  #print(b"Input: "+srcIn.group())
+  srcOut=srcIn.group().split(b"/")[-1]
+  que=srcOut.find(b'?')
+  if que!=-1:
+    srcOut=srcOut[:que]
+  #print(b"Output: "+srcOut)
+  return b"src=\""+srcOut
+def cssRip(cssIn):
+  #print(b"Input: "+cssIn.group())
+  #cssOut=b"href=\""+cssIn.group().split(b"/")[-1]
+  #print(b"Output: "+cssOut)
+  return b"href=\""+cssIn.group().split(b"/")[-1]
 def extract_mhtml(file_path: str, output_dir: str="."):
     """Extracts resources from an MHTML file and saves them to a directory.
 
@@ -31,15 +45,27 @@ def extract_mhtml(file_path: str, output_dir: str="."):
         else:
             ext = os.path.basename(content_type)
             filename = os.path.basename(content_id) + "." + ext
-
+            
+        que=filename.find('?')
+        if que!=-1:
+          filename=filename[:que]
+        colon=filename.find(':')#deal with annoying cid:***@mhtml.blink
+        if colon!=-1:
+          filename=filename[colon+1:]
+        content=part.get_payload(decode=True)
+        if content.startswith(b"<!DOCTYPE"):
+          if not (filename.endswith("htm") or filename.endswith("html")):
+            filename+=".html"
+          content=re.sub(srcPat,srcRip,content)
+          content=re.sub(cssPat,cssRip,content)
         with open(os.path.join(output_dir, filename), "wb") as out_file:
-            out_file.write(part.get_payload(decode=True))
+            out_file.write(content)
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Extract resources from an MHTML file.")
     parser.add_argument("file_path", help="Path to the MHTML file.")
-    parser.add_argument("-o", "--output-dir", default=".", help="Directory to save extracted files.")
+    parser.add_argument("-o", "--output-dir", default="/files", help="Directory to save extracted files.")
     args = parser.parse_args()
 
     extract_mhtml(args.file_path, args.output_dir)
