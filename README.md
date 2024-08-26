@@ -14,9 +14,9 @@ Default output : "/files". To change output directory, add option "-o path/to/di
 
 Fixed:
 
-HTML file without extension are added ".html" extension.
+HTML file without extension is added ".html" extension.
 
-Script source with question mark, eg 'src="/path/to/script.js?v=3"', question mark and afterwards are removed.
+Script resources with question mark, eg 'src="/path/to/script.js?v=3"', the question mark and afterwards are removed.
 
 Css files whose location is "cid:****@mthml.blink" are extracted.
 
@@ -28,7 +28,7 @@ Sometimes some links to style sheets are removed from the main html file, I don'
 
 Current goal:
 
-Converting "mht" and "mhtml" files, whose sources are no longer accessible, into single html files, similar to what SingleFile extension does. It seems that SingleFile can't process local html file that links to local resources. A workaround is, after using unmht.py to extract the html and resource files in a folder, run a python server in that directory, open in browser, then use SingleFile to convert it into a single html file.
+Converting "mht" and "mhtml" files, whose sources are no longer accessible on the internet, into single html files, similar to what SingleFile extension does. It seems that SingleFile can't process local html file that links to local resources. A workaround is, run a python server in a directory, then use unmht.py to extract the html and resource files into that folder, open server in browser, then use SingleFile to convert it into a single html file.
 
 Ultimate goal:
 
