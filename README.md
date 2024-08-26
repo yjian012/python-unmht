@@ -21,14 +21,15 @@ Script resources with question mark, eg 'src="/path/to/script.js?v=3"', the ques
 Css files whose location is "cid:****@mthml.blink" are extracted.
 
 
-Known bug:
+Known issues:
 
 Sometimes some links to style sheets are removed from the main html file, I don't know why. The `getCss.py` is created for manually adding the tags.
 
+It seems that it's unable to parse "multipart/alternative" content type.
 
 Current goal:
 
-Converting "mht" and "mhtml" files, whose sources are no longer accessible on the internet, into single html files, similar to what SingleFile extension does. It seems that SingleFile can't process local html file that links to local resources. A workaround is, run a python server in a directory, then use unmht.py to extract the html and resource files into that folder, open server in browser, then use SingleFile to convert it into a single html file.
+Converting "mht" and "mhtml" files into single html files, similar to what SingleFile extension does. It seems that SingleFile can't process local html file that links to local resources. A workaround is, run a python server in a directory, then use unmht.py to extract the html and resource files into that folder, open server in browser, then use SingleFile to convert it into a single html file.
 
 Ultimate goal:
 
