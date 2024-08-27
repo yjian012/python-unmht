@@ -6,6 +6,7 @@ import re
 
 srcPat=re.compile(b"src=\"(.*?)\"")
 cssPat=re.compile(b"href=\"(.*\.css)")
+bgPat=re.compile(b"background=[\"]?(.*?)[\"]?[ >]")
 def srcRip(srcIn):
   #print(b"Input: "+srcIn.group())
   srcOut=srcIn.group().split(b"/")[-1]
@@ -18,7 +19,9 @@ def cssRip(cssIn):
   #print(b"Input: "+cssIn.group())
   #cssOut=b"href=\""+cssIn.group().split(b"/")[-1]
   #print(b"Output: "+cssOut)
-  return b"href=\""+cssIn.group().split(b"/")[-1]
+  return b"href=\""+cssIn.group().split(b"/")[-1]+b"\""
+def bgRip(bgIn):
+  return b"background="+bgIn.group().split(b"/")[-1]+b" "
 def extract_mhtml(file_path: str, output_dir: str="."):
     """Extracts resources from an MHTML file and saves them to a directory.
 
@@ -39,10 +42,16 @@ def extract_mhtml(file_path: str, output_dir: str="."):
         content_type = part.get_content_type()
         content_id = part.get("Content-ID")
         content_location = part.get("Content-Location")
-
+        
+        #if content_type=="text/html":
+          #print(content_location)
         if content_location:
             filename = os.path.basename(content_location)
+            if not filename:
+              filename="index.html"
         else:
+            if not content_type or not content_id:
+              continue
             ext = os.path.basename(content_type)
             filename = os.path.basename(content_id) + "." + ext
             
@@ -53,11 +62,12 @@ def extract_mhtml(file_path: str, output_dir: str="."):
         if colon!=-1:
           filename=filename[colon+1:]
         content=part.get_payload(decode=True)
-        if content.startswith(b"<!DOCTYPE"):
+        if content_type=="text/html":
           if not (filename.endswith("htm") or filename.endswith("html")):
             filename+=".html"
           content=re.sub(srcPat,srcRip,content)
           content=re.sub(cssPat,cssRip,content)
+          content=re.sub(bgPat,bgRip,content)
         with open(os.path.join(output_dir, filename), "wb") as out_file:
             out_file.write(content)
 
