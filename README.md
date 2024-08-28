@@ -8,7 +8,7 @@ Usage:
 ```
 python3 unmht.py example.mhtml
 ```
-Default output : "/files". To change output directory, add option "-o path/to/directory".
+Default output directory : "/files". To change, add option "-o path/to/directory".
 
 `getCss.py` can generate html tags to include all extracted css files, makes it easier to copy into the main html file.
 
