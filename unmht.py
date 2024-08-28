@@ -14,12 +14,12 @@ def srcRip(srcIn):
   if que!=-1:
     srcOut=srcOut[:que]
   #print(b"Output: "+srcOut)
-  return b"src=\""+srcOut
+  return b"src=\""+srcOut+b"\""
 def cssRip(cssIn):
   #print(b"Input: "+cssIn.group())
   #cssOut=b"href=\""+cssIn.group().split(b"/")[-1]
   #print(b"Output: "+cssOut)
-  return b"href=\""+cssIn.group().split(b"/")[-1]+b"\""
+  return b"href=\""+cssIn.group().split(b"/")[-1]
 def bgRip(bgIn):
   return b"background="+bgIn.group().split(b"/")[-1]+b" "
 def extract_mhtml(file_path: str, output_dir: str="."):
