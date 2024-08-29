@@ -4,15 +4,24 @@ import os.path
 from email.policy import default
 import re
 
+specPat=re.compile(b"[%:\*<>]")
 srcPat=re.compile(b"src=\"(.*?)\"")
 cssPat=re.compile(b"href=\"(.*\.css)")
 bgPat=re.compile(b"background=[\"]?(.*?)[\"]?[ >]")
 def srcRip(srcIn):
-  return b"src=\""+re.sub(b'[\?%:]',b'_',srcIn.group().split(b"/")[-1])+b"\""
+  srcOut=srcIn.group().split(b"/")[-1]
+  que=srcOut.find(b'?')
+  if que!=-1:
+    srcOut=srcOut[:que]
+  return b"src=\""+re.sub(specPat,b'_',srcOut)+b"\""
 def cssRip(cssIn):
-  return b"href=\""+re.sub(b'[\?%:]',b'_',cssIn.group().split(b"/")[-1])
+  cssOut=cssIn.group().split(b"/")[-1]
+  que=cssOut.find(b'?')
+  if que!=-1:
+    cssOut=cssOut[:que]
+  return b"href=\""+re.sub(specPat,b'_',cssOut)
 def bgRip(bgIn):
-  return b"background="+re.sub(b'[\?%:]',b'_',bgIn.group().split(b"/")[-1]+b" ")
+  return b"background="+re.sub(specPat,b'_',bgIn.group().split(b"/")[-1]+b" ")
 def extract_mhtml(file_path: str, output_dir: str="."):
     """Extracts resources from an MHTML file and saves them to a directory.
 
@@ -45,7 +54,10 @@ def extract_mhtml(file_path: str, output_dir: str="."):
               continue
             ext = os.path.basename(content_type)
             filename = os.path.basename(content_id) + "." + ext
-        filename=re.sub('[\?%]','_',filename)
+        que=filename.find('?')
+        if que!=-1:
+          filename=filename[:que]
+        filename=re.sub("[%:\*<>]",'_',filename)
         
         content=part.get_payload(decode=True)
         if content_type=="text/html":
