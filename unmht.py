@@ -8,20 +8,11 @@ srcPat=re.compile(b"src=\"(.*?)\"")
 cssPat=re.compile(b"href=\"(.*\.css)")
 bgPat=re.compile(b"background=[\"]?(.*?)[\"]?[ >]")
 def srcRip(srcIn):
-  #print(b"Input: "+srcIn.group())
-  srcOut=srcIn.group().split(b"/")[-1]
-  que=srcOut.find(b'?')
-  if que!=-1:
-    srcOut=srcOut[:que]
-  #print(b"Output: "+srcOut)
-  return b"src=\""+srcOut+b"\""
+  return b"src=\""+re.sub(b'[\?%:]',b'_',srcIn.group().split(b"/")[-1])+b"\""
 def cssRip(cssIn):
-  #print(b"Input: "+cssIn.group())
-  #cssOut=b"href=\""+cssIn.group().split(b"/")[-1]
-  #print(b"Output: "+cssOut)
-  return b"href=\""+cssIn.group().split(b"/")[-1]
+  return b"href=\""+re.sub(b'[\?%:]',b'_',cssIn.group().split(b"/")[-1])
 def bgRip(bgIn):
-  return b"background="+bgIn.group().split(b"/")[-1]+b" "
+  return b"background="+re.sub(b'[\?%:]',b'_',bgIn.group().split(b"/")[-1]+b" ")
 def extract_mhtml(file_path: str, output_dir: str="."):
     """Extracts resources from an MHTML file and saves them to a directory.
 
@@ -54,13 +45,8 @@ def extract_mhtml(file_path: str, output_dir: str="."):
               continue
             ext = os.path.basename(content_type)
             filename = os.path.basename(content_id) + "." + ext
-            
-        que=filename.find('?')
-        if que!=-1:
-          filename=filename[:que]
-        colon=filename.find(':')#deal with annoying cid:***@mhtml.blink
-        if colon!=-1:
-          filename=filename[colon+1:]
+        filename=re.sub('[\?%]','_',filename)
+        
         content=part.get_payload(decode=True)
         if content_type=="text/html":
           if not (filename.endswith("htm") or filename.endswith("html")):
