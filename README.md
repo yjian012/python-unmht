@@ -16,7 +16,9 @@ Fixed:
 
 HTML file without extension is added ".html" extension.
 
-Script resources with special characters, eg 'src="/path/to/script.js?v=3"' or 'src="/some%20image%20file.jpg"' or css files whose location is "cid:****@mthml.blink", the special characters are replaced with underscores.
+Resources with question marks, eg 'src="/path/to/script.js?v=3"', the question mark and everything that follows are removed.
+
+Resources with special characters, eg 'src="/path/to/some%20image%20file.jpg"' or css files whose location is "cid:****@mthml.blink", the special characters are replaced with underscores.
 
 Known issues:
 
