@@ -58,7 +58,8 @@ def extract_mhtml(file_path: str, output_dir: str="."):
         if que!=-1:
           filename=filename[:que]
         filename=re.sub("[%:\*<>]",'_',filename)
-        
+        if filename.endswith("@mhtml.blink"):
+          filename=filename[:-12]+(".css")
         content=part.get_payload(decode=True)
         if content_type=="text/html":
           if not (filename.endswith("htm") or filename.endswith("html")):
